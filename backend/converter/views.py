@@ -3,27 +3,42 @@ from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.renderers import TemplateHTMLRenderer
 from django.http import FileResponse
 from datetime import datetime
-import sys
 import tempfile
 
-# 导入你的转换类
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-from iCal import ShiftScheduler
+from .ical import ShiftScheduler
 
 class ConvertExcelToICalView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'converter/upload.html'
+
+    def get(self, request):
+        return Response({
+            'title': 'Excel转iCal工具',
+            'message': '请选择Excel文件上传'
+        })
+
     def post(self, request):
         try:
             # 检查是否有文件上传
             if 'file' not in request.FILES:
-                return Response({'error': '没有上传文件'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({
+                    'title': 'Excel转iCal工具',
+                    'message': '没有上传文件',
+                    'error': True
+                })
 
             excel_file = request.FILES['file']
             
             # 检查文件类型
             if not excel_file.name.endswith(('.xlsx', '.xls')):
-                return Response({'error': '请上传Excel文件'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({
+                    'title': 'Excel转iCal工具',
+                    'message': '请上传Excel文件',
+                    'error': True
+                })
 
             # 创建临时文件来保存上传的Excel
             with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsx') as temp_excel:
@@ -41,36 +56,60 @@ class ConvertExcelToICalView(APIView):
             # 使用你的转换类处理文件
             scheduler = ShiftScheduler(temp_excel_path)
             if not scheduler.read_excel():
-                return Response({'error': '无法读取Excel文件'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({
+                    'title': 'Excel转iCal工具',
+                    'message': '无法读取Excel文件',
+                    'error': True
+                })
             
             if not scheduler.get_week_info():
-                return Response({'error': '无法获取周信息'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({
+                    'title': 'Excel转iCal工具',
+                    'message': '无法获取周信息',
+                    'error': True
+                })
                 
             if not scheduler.get_days_info():
-                return Response({'error': '无法获取日期信息'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({
+                    'title': 'Excel转iCal工具',
+                    'message': '无法获取日期信息',
+                    'error': True
+                })
                 
             lulu_row = scheduler.find_lulu_row()
             if lulu_row is None:
-                return Response({'error': '未找到排班信息'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({
+                    'title': 'Excel转iCal工具',
+                    'message': '未找到排班信息',
+                    'error': True
+                })
                 
             cal = scheduler.create_calendar(lulu_row)
             
             # 保存iCal文件
             if not scheduler.save_calendar(cal, output_path):
-                return Response({'error': '保存iCal文件失败'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({
+                    'title': 'Excel转iCal工具',
+                    'message': '保存iCal文件失败',
+                    'error': True
+                })
 
             # 清理临时文件
             os.unlink(temp_excel_path)
 
             # 返回成功响应
             return Response({
+                'title': 'Excel转iCal工具',
                 'message': '转换成功',
-                'filename': output_filename,
                 'download_url': f'/api/download/{output_filename}/'
-            }, status=status.HTTP_200_OK)
+            })
 
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({
+                'title': 'Excel转iCal工具',
+                'message': str(e),
+                'error': True
+            })
 
 class DownloadICalView(APIView):
     def get(self, request, filename):
