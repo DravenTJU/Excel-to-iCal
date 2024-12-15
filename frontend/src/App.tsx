@@ -11,16 +11,21 @@ const { Option } = Select;
 // API Base URL
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.122:8000';
 
+// Language type
+type LanguageType = 'en' | 'zh' | 'ja';
+
 // 获取浏览器语言
-const getBrowserLanguage = () => {
+const getBrowserLanguage = (): LanguageType => {
   const lang = navigator.language.toLowerCase();
-  return lang.startsWith('zh') ? 'zh' : 'en';
+  if (lang.startsWith('zh')) return 'zh';
+  if (lang.startsWith('ja')) return 'ja';
+  return 'en';
 };
 
 function App() {
   const [downloadUrl, setDownloadUrl] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-  const [lang, setLang] = useState<'en' | 'zh'>(getBrowserLanguage());
+  const [lang, setLang] = useState<LanguageType>(getBrowserLanguage());
 
   const t = translations[lang];
 
@@ -75,11 +80,12 @@ function App() {
               <Select
                 value={lang}
                 onChange={setLang}
-                style={{ width: 100 }}
+                style={{ width: 120 }}
                 suffixIcon={<GlobalOutlined />}
               >
                 <Option value="en">English</Option>
                 <Option value="zh">中文</Option>
+                <Option value="ja">日本語</Option>
               </Select>
             </Space>
           </div>

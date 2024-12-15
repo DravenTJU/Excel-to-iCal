@@ -36,5 +36,24 @@ export const translations = {
       uploadFailed: '上传失败: {filename}',
       processError: '处理失败: {error}'
     }
+  },
+  ja: {
+    title: 'Excel からiCalへの変換ツール',
+    selectFile: 'Excelファイルを選択',
+    fileSupport: '.xlsx または .xls 形式のファイルに対応',
+    downloadFile: 'カレンダーファイルをダウンロード',
+    instructions: '使用方法',
+    steps: {
+      upload: 'Excelフォーマットのスケジュールファイルをアップロード',
+      process: 'システムが自動的に処理してiCalファイルを生成',
+      download: '生成されたカレンダーファイルをダウンロード',
+      import: 'カレンダーアプリにファイルをインポート'
+    },
+    messages: {
+      uploadSuccess: '{filename} のアップロードが完了しました',
+      processingFailed: 'ファイル処理に失敗しました',
+      uploadFailed: 'アップロード失敗: {filename}',
+      processError: '処理失敗: {error}'
+    }
   }
 }; 
