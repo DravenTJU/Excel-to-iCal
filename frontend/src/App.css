@@ -53,14 +53,20 @@
 }
 
 .header {
-  text-align: center;
   margin-bottom: 24px;
+}
+
+.header .ant-space {
+  width: 100%;
 }
 
 .logo {
   font-size: 48px;
   color: #1890ff;
-  margin-bottom: 16px;
+}
+
+.language-selector {
+  margin-left: auto;
 }
 
 .upload-section {
@@ -104,5 +110,14 @@
   
   .logo {
     font-size: 36px;
+  }
+
+  .header .ant-space {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .language-selector {
+    margin-top: 16px;
   }
 }
