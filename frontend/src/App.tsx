@@ -6,7 +6,7 @@ import './App.css';
 
 const { Title, Text } = Typography;
 
-// API基础URL
+// API Base URL
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.122:8000';
 
 function App() {
@@ -35,18 +35,18 @@ function App() {
 
       if (status === 'done') {
         if (response && !response.error) {
-          message.success(`${name} 文件上传成功`);
+          message.success(`${name} uploaded successfully`);
           if (response.download_url) {
             setDownloadUrl(`${API_BASE_URL}${response.download_url}`);
           }
         } else {
-          const errorMsg = response?.message || '文件处理失败';
-          console.error('上传响应:', response);
-          message.error(`处理失败: ${errorMsg}`);
+          const errorMsg = response?.message || 'File processing failed';
+          console.error('Upload response:', response);
+          message.error(`Processing failed: ${errorMsg}`);
         }
       } else if (status === 'error') {
-        console.error('上传错误:', info.file.error);
-        message.error(`上传失败: ${name}`);
+        console.error('Upload error:', info.file.error);
+        message.error(`Upload failed: ${name}`);
       }
     },
   };
@@ -57,16 +57,16 @@ function App() {
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
           <div className="header">
             <CalendarOutlined className="logo" />
-            <Title level={2}>Excel 排班表转日历</Title>
+            <Title level={2}>Excel to iCal Converter</Title>
           </div>
           
           <div className="upload-section">
             <Upload {...uploadProps}>
               <Button icon={<UploadOutlined />} loading={loading} size="large">
-                选择Excel文件
+                Select Excel File
               </Button>
             </Upload>
-            <Text type="secondary">支持 .xlsx 或 .xls 格式的Excel文件</Text>
+            <Text type="secondary">Supports .xlsx or .xls format files</Text>
           </div>
 
           {downloadUrl && (
@@ -77,18 +77,18 @@ function App() {
                 size="large"
                 icon={<CalendarOutlined />}
               >
-                下载日历文件
+                Download Calendar File
               </Button>
             </div>
           )}
 
           <div className="instructions">
-            <Title level={4}>使用说明</Title>
+            <Title level={4}>Instructions</Title>
             <ul>
-              <li>上传Excel格式的排班表文件</li>
-              <li>系统会自动处理并生成iCal格式的日历文件</li>
-              <li>下载生成的日历文件</li>
-              <li>将日历文件导入到你的日历应用中</li>
+              <li>Upload your Excel format schedule file</li>
+              <li>System will automatically process and generate iCal file</li>
+              <li>Download the generated calendar file</li>
+              <li>Import the calendar file into your calendar app</li>
             </ul>
           </div>
         </Space>
