@@ -13,6 +13,7 @@ export const translations = {
     },
     messages: {
       uploadSuccess: '{filename} uploaded successfully',
+      convertSuccess: 'File converted successfully',
       processingFailed: 'File processing failed',
       uploadFailed: 'Upload failed: {filename}',
       processError: 'Processing failed: {error}'
@@ -32,6 +33,7 @@ export const translations = {
     },
     messages: {
       uploadSuccess: '{filename} 上传成功',
+      convertSuccess: '文件转换成功',
       processingFailed: '文件处理失败',
       uploadFailed: '上传失败: {filename}',
       processError: '处理失败: {error}'
@@ -51,6 +53,7 @@ export const translations = {
     },
     messages: {
       uploadSuccess: '{filename} のアップロードが完了しました',
+      convertSuccess: 'ファイル変換が完了しました',
       processingFailed: 'ファイル処理に失敗しました',
       uploadFailed: 'アップロード失敗: {filename}',
       processError: '処理失敗: {error}'

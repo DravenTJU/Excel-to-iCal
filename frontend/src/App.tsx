@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Upload, message, Button, Card, Typography, Space, Select } from 'antd';
-import { UploadOutlined, CalendarOutlined, GlobalOutlined } from '@ant-design/icons';
+import { UploadOutlined, CalendarOutlined, GlobalOutlined, DownloadOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import type { UploadProps, UploadFile } from 'antd';
 import { translations } from './locales/translations';
 import './App.css';
@@ -26,8 +26,15 @@ function App() {
   const [downloadUrl, setDownloadUrl] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [lang, setLang] = useState<LanguageType>(getBrowserLanguage());
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const t = translations[lang];
+
+  // 重置上传状态
+  const resetUpload = () => {
+    setDownloadUrl('');
+    setFileList([]);
+  };
 
   const uploadProps: UploadProps = {
     name: 'file',
@@ -35,12 +42,14 @@ function App() {
     accept: '.xlsx,.xls',
     showUploadList: true,
     maxCount: 1,
+    fileList,
     withCredentials: true,
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
     },
     onChange(info) {
       const { status, name, response } = info.file;
+      setFileList(info.fileList);
       
       if (status === 'uploading') {
         setLoading(true);
@@ -65,6 +74,14 @@ function App() {
         message.error(t.messages.uploadFailed.replace('{filename}', name));
       }
     },
+    onRemove: () => {
+      resetUpload();
+    },
+  };
+
+  // 处理上传按钮点击事件
+  const handleUploadClick = () => {
+    resetUpload();
   };
 
   return (
@@ -92,7 +109,12 @@ function App() {
           
           <div className="upload-section">
             <Upload {...uploadProps}>
-              <Button icon={<UploadOutlined />} loading={loading} size="large">
+              <Button 
+                icon={<UploadOutlined />} 
+                loading={loading} 
+                size="large"
+                onClick={handleUploadClick}
+              >
                 {t.selectFile}
               </Button>
             </Upload>
@@ -101,11 +123,17 @@ function App() {
 
           {downloadUrl && (
             <div className="download-section">
+              <Space align="center" className="success-message">
+                <CheckCircleOutlined style={{ color: '#52c41a', fontSize: '24px' }} />
+                <Text style={{ color: '#52c41a', fontSize: '16px' }}>
+                  {t.messages.convertSuccess}
+                </Text>
+              </Space>
               <Button 
                 type="primary" 
                 href={downloadUrl}
                 size="large"
-                icon={<CalendarOutlined />}
+                icon={<DownloadOutlined />}
               >
                 {t.downloadFile}
               </Button>
