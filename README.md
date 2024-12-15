@@ -381,12 +381,26 @@ server {
     
     # HSTS (如果你确定只使用 HTTPS)
     add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # 客户端缓存设置
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires max;
+        log_not_found off;
+        access_log off;
+        add_header Cache-Control "public, no-transform";
+    }
     
     # 前端静态文件
     location / {
         root /var/www/Excel-to-iCal/frontend/build;
         index index.html;
         try_files $uri $uri/ /index.html;
+
+        # 禁用缓存 index.html
+        location = /index.html {
+            add_header Cache-Control "no-cache, no-store, must-revalidate";
+            expires 0;
+        }
     }
 
     # 后端 API
@@ -396,16 +410,32 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # 增加超时时间
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
     }
 
     # 媒体文件
     location /media/ {
         alias /var/www/Excel-to-iCal/backend/media/;
+        expires 1h;
+        add_header Cache-Control "public, no-transform";
     }
 
-    # 静态文件
+    # Django 静态文件
     location /static/ {
         alias /var/www/Excel-to-iCal/backend/static/;
+        expires max;
+        add_header Cache-Control "public, no-transform";
+    }
+
+    # 禁止访问 . 文件
+    location ~ /\. {
+        deny all;
+        access_log off;
+        log_not_found off;
     }
 }
 ```
