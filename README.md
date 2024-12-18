@@ -50,6 +50,7 @@ cd Excel-to-iCal
 
 2. 创建并激活虚拟环境
 ```bash
+cd backend
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
 # 或
@@ -58,7 +59,6 @@ source venv/bin/activate  # Linux/Mac
 
 3. 安装后端依赖
 ```bash
-cd backend
 pip install -r requirements.txt
 ```
 
@@ -186,11 +186,11 @@ cd Excel-to-iCal
 
 ```bash
 # 创建虚拟环境
+cd backend
 python3 -m venv venv
 source venv/bin/activate
 
 # 安装依赖
-cd backend
 pip install -r requirements.txt
 pip install gunicorn  # 生产环境 WSGI 服务器
 
@@ -211,21 +211,30 @@ sudo nano /etc/supervisor/conf.d/excel-to-ical.conf
 
 添加以下内容：
 ```ini
-[program:excel-to-ical]
-directory=/var/www/Excel-to-iCal/backend
-command=/var/www/Excel-to-iCal/venv/bin/gunicorn config.wsgi:application --workers 3 --bind 127.0.0.1:8000
-user=www-data
-autostart=true
-autorestart=true
-stderr_logfile=/var/log/excel-to-ical.err.log
-stdout_logfile=/var/log/excel-to-ical.out.log
+[program:excel-to-ical]  # 程序名称，用于标识这个进程
+directory=/var/www/Excel-to-iCal/backend  # 工作目录
+command=/var/www/Excel-to-iCal/venv/bin/gunicorn config.wsgi:application --workers 3 --bind 127.0.0.1:8000  # 启动命令
+user=www-data  # 运行进程的用户
+autostart=true  # 随 supervisor 启动自动启动
+autorestart=true  # 进程崩溃时自动重启
+stderr_logfile=/var/log/excel-to-ical.err.log  # 错误日志位置
+stdout_logfile=/var/log/excel-to-ical.out.log  # 标准输出日志位置
 ```
 
 启动服务：
 ```bash
+# 重新加载配置文件
 sudo supervisorctl reread
+# 更新配置
 sudo supervisorctl update
+# 启动服务
 sudo supervisorctl start excel-to-ical
+# 停止服务
+sudo supervisorctl stop excel-to-ical
+# 重启服务
+sudo supervisorctl restart excel-to-ical
+# 查看所有程序状态
+sudo supervisorctl status
 ```
 
 ### 4. 前端部署
@@ -273,11 +282,6 @@ server {
     # 媒体文件
     location /media/ {
         alias /var/www/Excel-to-iCal/backend/media/;
-    }
-
-    # 静态文件
-    location /static/ {
-        alias /var/www/Excel-to-iCal/backend/static/;
     }
 }
 ```
@@ -424,13 +428,6 @@ server {
         add_header Cache-Control "public, no-transform";
     }
 
-    # Django 静态文件
-    location /static/ {
-        alias /var/www/Excel-to-iCal/backend/static/;
-        expires max;
-        add_header Cache-Control "public, no-transform";
-    }
-
     # 禁止访问 . 文件
     location ~ /\. {
         deny all;
@@ -536,7 +533,7 @@ sudo journalctl -u nginx
 2. 如果静态文件无法访问：
 ```bash
 sudo nginx -t
-sudo chown -R www-data:www-data /var/www/Excel-to-iCal/backend/static
+sudo chown -R www-data:www-data /var/www/Excel-to-iCal/frontend/build
 ```
 
 3. 如果上传失败：

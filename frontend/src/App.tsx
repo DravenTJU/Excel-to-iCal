@@ -9,7 +9,7 @@ const { Title, Text } = Typography;
 const { Option } = Select;
 
 // API Base URL
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.1.122:8000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
 // Language type
 type LanguageType = 'en' | 'zh' | 'ja';

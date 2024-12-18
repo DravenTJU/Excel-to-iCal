@@ -79,6 +79,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://192.168.1.122:3000",  # 添加你的前端地址
 ]
 
+# 允许携带认证信息（cookies）
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = [
