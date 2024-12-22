@@ -248,6 +248,10 @@ sudo apt install -y nodejs
 cd /var/www/Excel-to-iCal/frontend
 npm install
 npm run build
+
+# 上传前端文件到生产环境
+scp -r build/* root@IP:/var/www/Excel-to-iCal/frontend/build/
+chown -R www-data:www-data /var/www/Excel-to-iCal/frontend/build
 ```
 
 ### 5. NGINX 配置
