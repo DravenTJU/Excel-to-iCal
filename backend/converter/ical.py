@@ -73,21 +73,41 @@ class ShiftScheduler:
             print(f"获取日期信息错误: {str(e)}")
             return False
     
-    def find_lulu_row(self):
+    def get_employees(self):
+        """获取员工列表"""
         try:
-            # 在A列查找包含"lulu"的单元格
+            # 从第4行开始查找A列的员工名字
+            employees = []
+            for idx in range(4, len(self.df)):
+                name = str(self.df.iloc[idx, 0]).strip()
+                if name and name != 'nan':
+                    employees.append({
+                        'name': name,
+                        'row': idx
+                    })
+            
+            self.debug_print(f"找到的员工列表: {employees}")
+            return employees
+        except Exception as e:
+            print(f"获取员工列表错误: {str(e)}")
+            return []
+    
+    def find_employee_row(self, employee_name):
+        """根据员工名字查找对应的行号"""
+        try:
+            # 在A列查找指定员工名字的单元格
             column_a = self.df.iloc[:, 0].astype(str)
-            lulu_rows = column_a.str.contains('lulu', case=False)
-            matching_rows = self.df.index[lulu_rows].tolist()
+            employee_rows = column_a.str.contains(employee_name, case=False, regex=False)
+            matching_rows = self.df.index[employee_rows].tolist()
             
             if not matching_rows:
-                print("未找到LULU的排班信息")
+                print(f"未找到员工 {employee_name} 的排班信息")
                 return None
             
-            self.debug_print(f"找到LULU所在行: {matching_rows[0]}")
+            self.debug_print(f"找到员工 {employee_name} 所在行: {matching_rows[0]}")
             return matching_rows[0]  # 返回第一个匹配的行号
         except Exception as e:
-            print(f"查找LULU行号错误: {str(e)}")
+            print(f"查找员工行号错误: {str(e)}")
             return None
     
     def get_shift_times(self, row_index, day_column):
@@ -113,7 +133,7 @@ class ShiftScheduler:
             print(f"获取班次时间错误: {str(e)}")
             return None, None, None
     
-    def create_calendar(self, lulu_row):
+    def create_calendar(self, employee_row):
         cal = Calendar()
         cal.add('prodid', '-//Sushi Restaurant Shift Schedule//EN')
         cal.add('version', '2.0')
@@ -122,7 +142,7 @@ class ShiftScheduler:
         current_year = datetime.now().year
         
         for day_info in self.days_info:
-            start_time, end_time, task = self.get_shift_times(lulu_row, day_info['column'])
+            start_time, end_time, task = self.get_shift_times(employee_row, day_info['column'])
             if not all([start_time, end_time]):
                 continue
             
