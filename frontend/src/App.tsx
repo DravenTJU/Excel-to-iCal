@@ -47,6 +47,12 @@ function App() {
     setSelectedEmployee('');
   };
 
+  // 处理员工选择变化
+  const handleEmployeeChange = (value: string) => {
+    setSelectedEmployee(value);
+    setDownloadUrl(''); // 清除下载链接
+  };
+
   // 处理文件上传并获取员工列表
   const handleFileUpload = async (file: File) => {
     setLoadingEmployees(true);
@@ -79,6 +85,7 @@ function App() {
     maxCount: 1,
     fileList,
     beforeUpload: (file) => {
+      resetUpload(); // 在上传新文件前重置所有状态
       handleFileUpload(file);
       return false; // 阻止自动上传
     },
@@ -87,7 +94,7 @@ function App() {
     },
     onRemove: () => {
       resetUpload();
-    },
+    }
   };
 
   // 处理转换请求
@@ -153,7 +160,14 @@ function App() {
           <div className="upload-section">
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <Upload {...uploadProps}>
-                <Button icon={<UploadOutlined />} loading={loading} size="large">
+                <Button 
+                  icon={<UploadOutlined />} 
+                  loading={loading} 
+                  size="large"
+                  onClick={(e) => {
+                    resetUpload();
+                  }}
+                >
                   {t.selectFile}
                 </Button>
               </Upload>
@@ -164,7 +178,7 @@ function App() {
                   placeholder={t.employeePlaceholder}
                   style={{ width: '100%', marginTop: '8px' }}
                   value={selectedEmployee || undefined}
-                  onChange={setSelectedEmployee}
+                  onChange={handleEmployeeChange}
                   loading={loadingEmployees}
                   disabled={!employees.length}
                   notFoundContent={t.noEmployee}
