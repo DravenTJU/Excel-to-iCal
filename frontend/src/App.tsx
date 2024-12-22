@@ -74,15 +74,10 @@ function App() {
 
   const uploadProps: UploadProps = {
     name: 'file',
-    action: `${API_BASE_URL}/api/convert/`,
     accept: '.xlsx,.xls',
     showUploadList: true,
     maxCount: 1,
     fileList,
-    withCredentials: true,
-    headers: {
-      'X-Requested-With': 'XMLHttpRequest',
-    },
     beforeUpload: (file) => {
       handleFileUpload(file);
       return false; // 阻止自动上传
@@ -167,11 +162,12 @@ function App() {
               <div className="employee-select">
                 <Select
                   placeholder={t.employeePlaceholder}
-                  style={{ width: '100%' }}
-                  value={selectedEmployee}
+                  style={{ width: '100%', marginTop: '8px' }}
+                  value={selectedEmployee || undefined}
                   onChange={setSelectedEmployee}
                   loading={loadingEmployees}
                   disabled={!employees.length}
+                  notFoundContent={t.noEmployee}
                 >
                   {employees.map((emp) => (
                     <Option key={emp.row} value={emp.name}>{emp.name}</Option>
