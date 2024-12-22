@@ -77,6 +77,15 @@
   margin-bottom: 16px;
 }
 
+.employee-select {
+  margin: 16px 0;
+  text-align: left;
+}
+
+.employee-select .ant-select {
+  width: 100%;
+}
+
 .download-section {
   text-align: center;
   margin: 24px 0;
@@ -240,5 +249,9 @@
 
   .instructions {
     padding: 16px;
+  }
+
+  .employee-select {
+    margin: 12px 0;
   }
 }

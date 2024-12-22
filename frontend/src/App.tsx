@@ -14,6 +14,12 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 // Language type
 type LanguageType = 'en' | 'zh' | 'ja';
 
+// Employee type
+interface Employee {
+  name: string;
+  row: number;
+}
+
 // 获取浏览器语言
 const getBrowserLanguage = (): LanguageType => {
   const lang = navigator.language.toLowerCase();
@@ -27,6 +33,9 @@ function App() {
   const [loading, setLoading] = useState<boolean>(false);
   const [lang, setLang] = useState<LanguageType>(getBrowserLanguage());
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [selectedEmployee, setSelectedEmployee] = useState<string>('');
+  const [loadingEmployees, setLoadingEmployees] = useState<boolean>(false);
 
   const t = translations[lang];
 
@@ -34,6 +43,33 @@ function App() {
   const resetUpload = () => {
     setDownloadUrl('');
     setFileList([]);
+    setEmployees([]);
+    setSelectedEmployee('');
+  };
+
+  // 处理文件上传并获取员工列表
+  const handleFileUpload = async (file: File) => {
+    setLoadingEmployees(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/employees/`, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+
+      if (!data.error && data.employees) {
+        setEmployees(data.employees);
+      } else {
+        message.error(data.message || t.messages.employeeLoadError);
+      }
+    } catch (error) {
+      message.error(t.messages.employeeLoadError);
+    } finally {
+      setLoadingEmployees(false);
+    }
   };
 
   const uploadProps: UploadProps = {
@@ -47,41 +83,53 @@ function App() {
     headers: {
       'X-Requested-With': 'XMLHttpRequest',
     },
+    beforeUpload: (file) => {
+      handleFileUpload(file);
+      return false; // 阻止自动上传
+    },
     onChange(info) {
-      const { status, name, response } = info.file;
       setFileList(info.fileList);
-      
-      if (status === 'uploading') {
-        setLoading(true);
-        return;
-      }
-      
-      setLoading(false);
-
-      if (status === 'done') {
-        if (response && !response.error) {
-          message.success(t.messages.uploadSuccess.replace('{filename}', name));
-          if (response.download_url) {
-            setDownloadUrl(`${API_BASE_URL}${response.download_url}`);
-          }
-        } else {
-          const errorMsg = response?.message || t.messages.processingFailed;
-          console.error('Upload response:', response);
-          message.error(t.messages.processError.replace('{error}', errorMsg));
-        }
-      } else if (status === 'error') {
-        console.error('Upload error:', info.file.error);
-        message.error(t.messages.uploadFailed.replace('{filename}', name));
-      }
     },
     onRemove: () => {
       resetUpload();
     },
   };
 
-  // 处理上传按钮点击事件
-  const handleUploadClick = () => {
-    resetUpload();
+  // 处理转换请求
+  const handleConvert = async () => {
+    if (!selectedEmployee) {
+      message.warning(t.messages.pleaseSelectEmployee);
+      return;
+    }
+
+    if (!fileList.length) {
+      message.warning(t.messages.uploadFailed);
+      return;
+    }
+
+    setLoading(true);
+    const formData = new FormData();
+    formData.append('file', fileList[0].originFileObj as File);
+    formData.append('employee_name', selectedEmployee);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/convert/`, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+
+      if (!data.error) {
+        message.success(t.messages.convertSuccess);
+        setDownloadUrl(`${API_BASE_URL}${data.download_url}`);
+      } else {
+        message.error(data.message || t.messages.processingFailed);
+      }
+    } catch (error) {
+      message.error(t.messages.processError.replace('{error}', ''));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -108,17 +156,40 @@ function App() {
           </div>
           
           <div className="upload-section">
-            <Upload {...uploadProps}>
-              <Button 
-                icon={<UploadOutlined />} 
-                loading={loading} 
-                size="large"
-                onClick={handleUploadClick}
-              >
-                {t.selectFile}
-              </Button>
-            </Upload>
-            <Text type="secondary">{t.fileSupport}</Text>
+            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+              <Upload {...uploadProps}>
+                <Button icon={<UploadOutlined />} loading={loading} size="large">
+                  {t.selectFile}
+                </Button>
+              </Upload>
+              <Text type="secondary">{t.fileSupport}</Text>
+
+              <div className="employee-select">
+                <Select
+                  placeholder={t.employeePlaceholder}
+                  style={{ width: '100%' }}
+                  value={selectedEmployee}
+                  onChange={setSelectedEmployee}
+                  loading={loadingEmployees}
+                  disabled={!employees.length}
+                >
+                  {employees.map((emp) => (
+                    <Option key={emp.row} value={emp.name}>{emp.name}</Option>
+                  ))}
+                </Select>
+              </div>
+
+              {fileList.length > 0 && employees.length > 0 && (
+                <Button
+                  type="primary"
+                  onClick={handleConvert}
+                  loading={loading}
+                  style={{ width: '100%' }}
+                >
+                  {t.steps.convert}
+                </Button>
+              )}
+            </Space>
           </div>
 
           {downloadUrl && (
@@ -144,7 +215,8 @@ function App() {
             <Title level={4}>{t.instructions}</Title>
             <ul>
               <li>{t.steps.upload}</li>
-              <li>{t.steps.process}</li>
+              <li>{t.steps.select}</li>
+              <li>{t.steps.convert}</li>
               <li>{t.steps.download}</li>
               <li>{t.steps.import}</li>
             </ul>
