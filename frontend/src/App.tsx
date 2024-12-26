@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, message, Button, Card, Typography, Space, Select } from 'antd';
+import { Upload, message, Button, Card, Typography, Space, Select, Table } from 'antd';
 import { UploadOutlined, CalendarOutlined, GlobalOutlined, DownloadOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import type { UploadProps, UploadFile } from 'antd';
 import { translations } from './locales/translations';
@@ -20,6 +20,15 @@ interface Employee {
   row: number;
 }
 
+// Schedule Preview type
+interface SchedulePreview {
+  date: string;
+  weekday: string;
+  start_time: string;
+  end_time: string;
+  task: string;
+}
+
 // 获取浏览器语言
 const getBrowserLanguage = (): LanguageType => {
   const lang = navigator.language.toLowerCase();
@@ -36,8 +45,30 @@ function App() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<string>('');
   const [loadingEmployees, setLoadingEmployees] = useState<boolean>(false);
+  const [schedulePreview, setSchedulePreview] = useState<SchedulePreview[]>([]);
+  const [weekInfo, setWeekInfo] = useState<string>('');
 
   const t = translations[lang];
+
+  // 表格列定义
+  const columns = [
+    {
+      title: t.table.date,
+      dataIndex: 'date',
+      key: 'date',
+      render: (date: string, record: SchedulePreview) => `${record.weekday} ${date}`
+    },
+    {
+      title: t.table.time,
+      key: 'time',
+      render: (record: SchedulePreview) => `${record.start_time} - ${record.end_time}`
+    },
+    {
+      title: t.table.task,
+      dataIndex: 'task',
+      key: 'task'
+    }
+  ];
 
   // 重置上传状态
   const resetUpload = () => {
@@ -45,12 +76,15 @@ function App() {
     setFileList([]);
     setEmployees([]);
     setSelectedEmployee('');
+    setSchedulePreview([]);
+    setWeekInfo('');
   };
 
   // 处理员工选择变化
   const handleEmployeeChange = (value: string) => {
     setSelectedEmployee(value);
     setDownloadUrl(''); // 清除下载链接
+    setSchedulePreview([]); // 清除排班预览
   };
 
   // 处理文件上传并获取员工列表
@@ -124,6 +158,8 @@ function App() {
       if (!data.error) {
         message.success(t.messages.convertSuccess);
         setDownloadUrl(`${API_BASE_URL}${data.download_url}`);
+        setSchedulePreview(data.schedule_preview);
+        setWeekInfo(data.week_info);
       } else {
         message.error(data.message || t.messages.processingFailed);
       }
@@ -210,6 +246,25 @@ function App() {
                   {t.messages.convertSuccess}
                 </Text>
               </Space>
+
+              {weekInfo && (
+                <div className="week-info">
+                  <Text strong>{weekInfo}</Text>
+                </div>
+              )}
+
+              {schedulePreview.length > 0 && (
+                <div className="schedule-preview">
+                  <Table
+                    dataSource={schedulePreview}
+                    columns={columns}
+                    pagination={false}
+                    size="small"
+                    className="preview-table"
+                  />
+                </div>
+              )}
+
               <Button 
                 type="primary" 
                 href={downloadUrl}

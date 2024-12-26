@@ -255,3 +255,30 @@
     margin: 12px 0;
   }
 }
+
+.week-info {
+  margin: 12px 0;
+  text-align: center;
+}
+
+.schedule-preview {
+  margin: 16px 0;
+}
+
+.preview-table {
+  margin-bottom: 20px;
+}
+
+.preview-table .ant-table-thead > tr > th {
+  background-color: #f6ffed;
+  color: #52c41a;
+  font-weight: 600;
+}
+
+.preview-table .ant-table-tbody > tr > td {
+  padding: 8px 16px;
+}
+
+.preview-table .ant-table-tbody > tr:hover > td {
+  background-color: #f6ffed;
+}

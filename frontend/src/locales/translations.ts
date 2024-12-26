@@ -23,6 +23,11 @@ export const translations = {
       processError: 'Processing failed: {error}',
       pleaseSelectEmployee: 'Please select an employee first',
       employeeLoadError: 'Failed to load employee list'
+    },
+    table: {
+      date: 'Date',
+      time: 'Time',
+      task: 'Task'
     }
   },
   zh: {
@@ -49,6 +54,11 @@ export const translations = {
       processError: '处理失败: {error}',
       pleaseSelectEmployee: '请先选择员工',
       employeeLoadError: '加载员工列表失败'
+    },
+    table: {
+      date: '日期',
+      time: '时间',
+      task: '任务'
     }
   },
   ja: {
@@ -74,7 +84,12 @@ export const translations = {
       uploadFailed: 'アップロード失敗: {filename}',
       processError: '処理失敗: {error}',
       pleaseSelectEmployee: '従業員を選択してください',
-      employeeLoadError: '従業員リストの読み込みに失敗しました'
+      employeeLoadError: '従業員リ��トの読み込みに失敗しました'
+    },
+    table: {
+      date: '日付',
+      time: '時間',
+      task: '作業'
     }
   }
 }; 
