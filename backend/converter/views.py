@@ -162,6 +162,19 @@ class ConvertExcelToICalView(APIView):
                         'error': True,
                         'message': '未找到该员工的排班信息'
                     }, status=status.HTTP_400_BAD_REQUEST)
+
+                # 获取排班预览数据
+                schedule_preview = []
+                for day_info in scheduler.days_info:
+                    start_time, end_time, task = scheduler.get_shift_times(employee_row, day_info['column'])
+                    if start_time and end_time:
+                        schedule_preview.append({
+                            'date': day_info['date'],
+                            'weekday': day_info['weekday'],
+                            'start_time': start_time,
+                            'end_time': end_time,
+                            'task': task if task else ''
+                        })
                     
                 cal = scheduler.create_calendar(employee_row)
                 
@@ -185,11 +198,13 @@ class ConvertExcelToICalView(APIView):
                 except:
                     pass
 
-            # 返回成功响应
+            # 返回成功响应，包含排班预览数据
             return Response({
                 'error': False,
                 'message': '转换成功',
-                'download_url': f'/api/download/{output_filename}/'
+                'download_url': f'/api/download/{output_filename}/',
+                'schedule_preview': schedule_preview,
+                'week_info': scheduler.week_info
             }, status=status.HTTP_200_OK)
 
         except Exception as e:
