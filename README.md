@@ -141,8 +141,7 @@ npm start
 - 建议在生产环境中修改 Django 的 SECRET_KEY 和 DEBUG 设置
 
 ### 前端配置
-- 默认后端 API 地址为 `http://192.168.1.122:8000`
-- 可通过环境变量 `REACT_APP_API_URL` 修改 API 地址
+- 默认后端 API 地址为相对路径，可通过.env环境变量 `REACT_APP_API_URL` 修改 API 地址
 - 支持 TypeScript 类型检查
 - 使用 Ant Design 组件库
 - 支持多语言国际化
