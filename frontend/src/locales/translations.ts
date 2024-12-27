@@ -11,7 +11,7 @@ export const translations = {
     steps: {
       upload: 'Upload your Excel format schedule file',
       select: 'Select the employee from the list',
-      convert: 'Click convert to generate calendar file',
+      convert: 'Convert to Calendar',
       download: 'Download the generated calendar file',
       import: 'Import the calendar file into your calendar app'
     },
@@ -22,7 +22,8 @@ export const translations = {
       uploadFailed: 'Upload failed: {filename}',
       processError: 'Processing failed: {error}',
       pleaseSelectEmployee: 'Please select an employee first',
-      employeeLoadError: 'Failed to load employee list'
+      employeeLoadError: 'Failed to load employee list',
+      converted: 'Converted'
     },
     table: {
       date: 'Date',
@@ -42,7 +43,7 @@ export const translations = {
     steps: {
       upload: '上传Excel格式的排班表文件',
       select: '从列表中选择员工',
-      convert: '点击转换生成日历文件',
+      convert: '转换为日历',
       download: '下载生成的日历文件',
       import: '将日历文件导入到你的日历应用中'
     },
@@ -53,7 +54,8 @@ export const translations = {
       uploadFailed: '上传失败: {filename}',
       processError: '处理失败: {error}',
       pleaseSelectEmployee: '请先选择员工',
-      employeeLoadError: '加载员工列表失败'
+      employeeLoadError: '加载员工列表失败',
+      converted: '已转换'
     },
     table: {
       date: '日期',
@@ -73,7 +75,7 @@ export const translations = {
     steps: {
       upload: 'Excelフォーマットのスケジュールファイルをアップロード',
       select: 'リストから従業員を選択',
-      convert: '変換をクリックしてカレンダーファイルを生成',
+      convert: 'カレンダーに変換',
       download: '生成されたカレンダーファイルをダウンロード',
       import: 'カレンダーアプリにファイルをインポート'
     },
@@ -84,7 +86,8 @@ export const translations = {
       uploadFailed: 'アップロード失敗: {filename}',
       processError: '処理失敗: {error}',
       pleaseSelectEmployee: '従業員を選択してください',
-      employeeLoadError: '従業員リ��トの読み込みに失敗しました'
+      employeeLoadError: '従業員リストの読み込みに失敗しました',
+      converted: '変換済み'
     },
     table: {
       date: '日付',

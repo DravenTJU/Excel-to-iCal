@@ -47,6 +47,7 @@ function App() {
   const [loadingEmployees, setLoadingEmployees] = useState<boolean>(false);
   const [schedulePreview, setSchedulePreview] = useState<SchedulePreview[]>([]);
   const [weekInfo, setWeekInfo] = useState<string>('');
+  const [converted, setConverted] = useState<boolean>(false);
 
   const t = translations[lang];
 
@@ -78,6 +79,7 @@ function App() {
     setSelectedEmployee('');
     setSchedulePreview([]);
     setWeekInfo('');
+    setConverted(false);
   };
 
   // 处理员工选择变化
@@ -85,6 +87,7 @@ function App() {
     setSelectedEmployee(value);
     setDownloadUrl(''); // 清除下载链接
     setSchedulePreview([]); // 清除排班预览
+    setConverted(false);
   };
 
   // 处理文件上传并获取员工列表
@@ -160,6 +163,7 @@ function App() {
         setDownloadUrl(`${API_BASE_URL}${data.download_url}`);
         setSchedulePreview(data.schedule_preview);
         setWeekInfo(data.week_info);
+        setConverted(true);
       } else {
         message.error(data.message || t.messages.processingFailed);
       }
@@ -230,9 +234,10 @@ function App() {
                   type="primary"
                   onClick={handleConvert}
                   loading={loading}
+                  disabled={converted}
                   style={{ width: '100%' }}
                 >
-                  {t.steps.convert}
+                  {converted ? t.messages.converted : t.steps.convert}
                 </Button>
               )}
             </Space>
