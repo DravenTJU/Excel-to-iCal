@@ -41,15 +41,18 @@
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   background-color: #f0f2f5;
   padding: 20px;
+  scroll-behavior: smooth;
+  overflow-y: auto;
 }
 
 .upload-card {
   width: 100%;
   max-width: 600px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin: 20px 0;
 }
 
 .header {
@@ -88,12 +91,13 @@
 
 .download-section {
   text-align: center;
-  margin: 5px 0;
+  margin: 12px 0;
   padding: 24px;
   background-color: #f6ffed;
   border-radius: 8px;
   border: 1px solid #b7eb8f;
   animation: slideInAndPop 0.8s ease-out;
+  scroll-margin: 20vh;
 }
 
 .success-message {

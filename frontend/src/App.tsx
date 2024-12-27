@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Upload, message, Button, Card, Typography, Space, Select, Table } from 'antd';
 import { UploadOutlined, CalendarOutlined, GlobalOutlined, DownloadOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import type { UploadProps, UploadFile } from 'antd';
@@ -48,6 +48,7 @@ function App() {
   const [schedulePreview, setSchedulePreview] = useState<SchedulePreview[]>([]);
   const [weekInfo, setWeekInfo] = useState<string>('');
   const [converted, setConverted] = useState<boolean>(false);
+  const downloadSectionRef = useRef<HTMLDivElement>(null);
 
   const t = translations[lang];
 
@@ -164,6 +165,13 @@ function App() {
         setSchedulePreview(data.schedule_preview);
         setWeekInfo(data.week_info);
         setConverted(true);
+        
+        setTimeout(() => {
+          downloadSectionRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }, 100);
       } else {
         message.error(data.message || t.messages.processingFailed);
       }
@@ -244,7 +252,7 @@ function App() {
           </div>
 
           {downloadUrl && (
-            <div className="download-section">
+            <div className="download-section" ref={downloadSectionRef}>
               <Space align="center" className="success-message">
                 <CheckCircleOutlined style={{ color: '#52c41a', fontSize: '24px' }} />
                 <Text style={{ color: '#52c41a', fontSize: '16px' }}>
