@@ -48,20 +48,38 @@ class ShiftScheduler:
             # 获取每天的日期信息（B4, E4, H4, K4, N4, Q4, T4）
             day_columns = [1, 4, 7, 10, 13, 16, 19]  # B=1, E=4, H=7 等
             
-            self.days_info = []
+            # 先收集所有日期信息，检查是否跨年
+            temp_days_info = []
+            months = set()
+            
             for col in day_columns:
                 day_info = str(self.df.iloc[3, col]).strip()
                 if day_info and day_info != 'nan':
                     # 解析日期，格式如 "Monday 11/11"
                     match = re.search(r'(\w+)\s+(\d{1,2}/\d{1,2})', day_info)
                     if match:
-                        day_data = {
+                        day, month = map(int, match.group(2).split('/'))
+                        months.add(month)
+                        temp_days_info.append({
                             'weekday': match.group(1),
                             'date': match.group(2),
-                            'column': col
-                        }
-                        self.days_info.append(day_data)
-                        self.debug_print(f"解析到日期信息: {day_data}")
+                            'column': col,
+                            'month': month,
+                            'day': day
+                        })
+            
+            # 检查是否跨年（同时存在12月和1月）
+            is_year_end = 12 in months and 1 in months
+            current_year = datetime.now().year
+            
+            # 处理年份
+            self.days_info = []
+            for day_data in temp_days_info:
+                # 只有在跨年且月份为1月时才加一年
+                year = current_year + 1 if (is_year_end and day_data['month'] == 1) else current_year
+                day_data['year'] = year
+                self.days_info.append(day_data)
+                self.debug_print(f"解析到日期信息: {day_data}")
             
             return True
         except Exception as e:
