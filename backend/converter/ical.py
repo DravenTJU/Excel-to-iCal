@@ -151,35 +151,40 @@ class ShiftScheduler:
         cal.add('prodid', '-//Sushi Restaurant Shift Schedule//EN')
         cal.add('version', '2.0')
         
-        # 获取当前年份
-        current_year = datetime.now().year
-        
         for day_info in self.days_info:
             start_time, end_time, task = self.get_shift_times(employee_row, day_info['column'])
             if not all([start_time, end_time]):
                 continue
             
             try:
-                # 解析日期
-                day, month = map(int, day_info['date'].split('/'))
-                
-                # 创建事件
-                event = Event()
-                
-                # 设置开始和结束时间
                 start_hour, start_minute = map(int, start_time.split(':'))
                 end_hour, end_minute = map(int, end_time.split(':'))
                 
-                start_dt = self.timezone.localize(datetime(current_year, month, day, start_hour, start_minute))
-                end_dt = self.timezone.localize(datetime(current_year, month, day, end_hour, end_minute))
+                # 使用 day_info 中的年份、月份和日期
+                start_dt = self.timezone.localize(datetime(
+                    day_info['year'],
+                    day_info['month'],
+                    day_info['day'],
+                    start_hour,
+                    start_minute
+                ))
                 
+                end_dt = self.timezone.localize(datetime(
+                    day_info['year'],
+                    day_info['month'],
+                    day_info['day'],
+                    end_hour,
+                    end_minute
+                ))
+                
+                event = Event()
                 event.add('summary', f'{task if task else "Work"} {start_hour}-{end_hour}')
                 event.add('dtstart', start_dt)
                 event.add('dtend', end_dt)
                 event.add('description', f'Task: {task}')
                 
                 cal.add_component(event)
-                self.debug_print(f"添加事件: {day}/{month} {start_time}-{end_time} {task}")
+                self.debug_print(f"添加事件: {day_info['year']}/{day_info['month']}/{day_info['day']} {start_time}-{end_time} {task}")
             except Exception as e:
                 print(f"创建事件错误: {str(e)}")
                 continue
