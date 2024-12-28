@@ -23,6 +23,9 @@ interface Employee {
 // Schedule Preview type
 interface SchedulePreview {
   date: string;
+  day: number;
+  month: number;
+  year: number;
   weekday: string;
   start_time: string;
   end_time: string;
@@ -58,12 +61,14 @@ function App() {
       title: t.table.date,
       dataIndex: 'date',
       key: 'date',
-      render: (date: string, record: SchedulePreview) => `${record.weekday} ${date}`
+      render: (_: any, record: SchedulePreview) => {
+        return `${record.weekday} ${record.day}/${record.month}/${record.year}`;
+      }
     },
     {
       title: t.table.time,
       key: 'time',
-      render: (record: SchedulePreview) => `${record.start_time} - ${record.end_time}`
+      render: (_: any, record: SchedulePreview) => `${record.start_time} - ${record.end_time}`
     },
     {
       title: t.table.task,

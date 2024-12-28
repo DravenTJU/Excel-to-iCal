@@ -170,6 +170,9 @@ class ConvertExcelToICalView(APIView):
                     if start_time and end_time:
                         schedule_preview.append({
                             'date': day_info['date'],
+                            'day': day_info['day'], 
+                            'month': day_info['month'],
+                            'year': day_info['year'],
                             'weekday': day_info['weekday'],
                             'start_time': start_time,
                             'end_time': end_time,
