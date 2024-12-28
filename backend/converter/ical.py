@@ -38,11 +38,6 @@ class ShiftScheduler:
             self.week_info = week_info_b1 if week_info_b1 and week_info_b1 != 'nan' else week_info_b2
             self.debug_print(f"获取到的周信息: {self.week_info}")
             
-            # 解析周信息
-            match = re.search(r'\[WEEK (\d+)\]\s*(\d+\s+\w+\s*-\s*\d+\s+\w+\s+\d{4})', self.week_info)
-            if not match:
-                raise ValueError("周信息格式不正确")
-                
             return True
         except Exception as e:
             print(f"获取周信息错误: {str(e)}")
