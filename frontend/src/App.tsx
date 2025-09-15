@@ -32,18 +32,11 @@ interface SchedulePreview {
   task: string;
 }
 
-// 获取浏览器语言
-const getBrowserLanguage = (): LanguageType => {
-  const lang = navigator.language.toLowerCase();
-  if (lang.startsWith('zh')) return 'zh';
-  if (lang.startsWith('ja')) return 'ja';
-  return 'en';
-};
 
 function App() {
   const [downloadUrl, setDownloadUrl] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-  const [lang, setLang] = useState<LanguageType>(getBrowserLanguage());
+  const [lang, setLang] = useState<LanguageType>('en');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<string>('');
